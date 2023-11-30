@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ['./wait-for-it.sh', 'db:5432', '--', 'npm', 'start']
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    platform: linux/arm64
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    platform: linux/arm64
