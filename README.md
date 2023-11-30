@@ -1,73 +1,77 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+ТЕХНИЧЕСКОЕ ЗАДАНИЕ 
+Цель:
+Разработать сервис который возвращает текущую погоду в городе. Погоду
+получаем с сервиса https://www.weatherapi.com/
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Системные требования к проекту:
+Используется стек NestJs + TypeOrm + PostgresSQL база данных
+Проект поднимается командой docker-compose up . В докере поднимаются 2
+сервиса. Сам сервис на NodeJs и БД.
+Все ручки сервиса должны документироваться в swagger
 
-## Description
+Методы сервиса:
+*Все методы - post запросы
+Регистрация.
+Входящие параметры:
+{
+login!: string
+password!: string
+fio!: string
+}
+пароль должен быть не не короче 6 символов, и содержать
+один из символов: . , ! _
+Исходящие параметры:
+{
+fio!: string
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+apiToken!: string
+}
+* apiToken - должен геририроваться успешной регистрации пользователя
+*Сохраняем данные о пользователе и сгенирированный apiToken в таблицу users
+Авторизация.
+Входящие параметры:
+{
+login!: string
+password!: string
+}
+Исходящие параметры:
+{
+fio!: string
+apiToken!: string
+}
 
-```bash
-$ npm install
-```
+Текущая погода.
+Входящие параметры:
+{
+apiToken!: string
+city!: string
+language?: string = "ru"
+}
+Логика:
+1. Производится валидация токена. Если токен невалидный, то возвращаем
+ошибку
+2. Отправляется запрос для получения погоды на /current.json
+3. Сохраняем в БД историю запроса. (структура таблицы ниже)
+4. Возвращаем ответ от сервиса погоды нашему пользователю
+История запросов - это как-бы “логи” сохраняемые в бд
+Структура таблицы:
 
-## Running the app
 
-```bash
-# development
-$ npm run start
+Actions
+PK - id
+FK- user_id
+action_time
+request_result
+temp_c
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
-```
+user_id - ссылка на пользователя совершающего запрос
+action_time - время в unix секундах, когда пришел запрос от пользователя
+request_result. В это поле сохраняем статус ответа от сервиса с погодой (200, 400
+и тд…)
+temp_c. Сохраняем сюда температуру, которую вернул сервис. Если сервис вернул
+ошибку, то проставляем null
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Результат выполнения задания - ссылка на репозиторий с выполненным заданием.
