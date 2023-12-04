@@ -3,7 +3,7 @@
 
 
 **Видео с демонстрацией работы тестового задания:**
-https://www.loom.com/share/529554afbc674abb8acb3fa250cf2257
+https://www.loom.com/share/2aae48ff4d1a4f6881a8717980e7199b
 
 
 **ТЕХНИЧЕСКОЕ ЗАДАНИЕ**
