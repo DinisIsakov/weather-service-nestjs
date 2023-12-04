@@ -1,7 +1,9 @@
 import { Controller, Post, Body, ValidationPipe, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
+import { ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
@@ -19,6 +21,9 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiResponse({ status: 201, description: 'User registered successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: AuthDto })
   async register(@Body(ValidationPipe) authDto: AuthDto) {
     this.logger.log(
       'Received registration request: ' + JSON.stringify(authDto),
@@ -33,6 +38,9 @@ export class AuthController {
   }
 
   @Post('login')
+  @ApiResponse({ status: 200, description: 'User logged in successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: AuthDto })
   async login(@Body(ValidationPipe) authDto: AuthDto) {
     this.logger.log('Received login request: ' + JSON.stringify(authDto));
 

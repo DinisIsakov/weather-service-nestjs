@@ -5,6 +5,7 @@ import {
   NotFoundException,
   HttpCode,
 } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { ExternalWeatherService } from './external-weather.service';
 import { WeatherService } from './weather.service';
 import { CurrentWeather } from './types';
@@ -18,6 +19,11 @@ export class WeatherController {
 
   @Post('current')
   @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'Current weather data retrieved successfully',
+  })
+  @ApiResponse({ status: 404, description: 'User or weather data not found' })
   async getCurrentWeather(@Body() weatherDto: CurrentWeather) {
     console.log('Received weather request:', weatherDto);
 

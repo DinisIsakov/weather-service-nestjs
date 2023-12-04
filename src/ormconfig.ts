@@ -5,7 +5,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   retryAttempts: 5,
   retryDelay: 3000,
   type: 'postgres',
-  host: 'localhost',
+  host: process.env.DB_HOST || 'localhost',
   port: 5432,
   username: 'postgres',
   password: 'postgres',

@@ -1,23 +1,24 @@
-# Use an official Node.js runtime as a parent image
+# Используйте официальный образ Node.js в качестве базового образа
 FROM node:16-alpine3.11
 
-# Set the working directory in the container
+# Установите рабочий каталог в контейнере
 WORKDIR /usr/src/app
 
-# Install bash
+# Установите bash и другие зависимости
 RUN apk --no-cache add bash
 
-# Copy package.json and package-lock.json to the working directory
+# Копируйте только файлы, связанные с зависимостями, и устанавливайте их отдельно,
+# чтобы использовать кэш npm install, если package.json не изменился
 COPY package*.json ./
 
-# Install app dependencies
+# Установите зависимости
 RUN npm install
 
-# Copy the rest of the application code
+# Копируйте остальные файлы приложения
 COPY . .
 
-# Inform Docker that the container listens on the specified network ports
-EXPOSE 3000
+# Копируйте файл конфигурации TypeORM из директории src
+COPY ./src/ormconfig.ts .
 
-# Run the application
-CMD ["ash", "-c", "npm start"]
+# Дождитесь готовности базы данных и запустите приложение
+CMD ["npm", "run", "start:dev"]
